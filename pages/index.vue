@@ -1,65 +1,60 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">nuxt-simple-todo-study</h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+  <div class="to-do">
+    <p>
+      NewTask:
+      <input v-model="toDoName" type="text" />
+      <button @click="addToDoItem">Add</button>
+    </p>
+    <hr />
+    <ul class="list-group">
+      <li v-for="toDoItem in toDoItems" :key="toDoItem.id" class="list-item">
+        <input v-model="toDoItem.complete" type="checkbox" />
+        <span :class="{ complete: toDoItem.complete }">{{
+          toDoItem.itemName
+        }}</span>
+        <button @click="deleteToDoItem(toDoItem)">Delete</button>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from '@nuxtjs/composition-api'
+import { useTodo } from '~/composables/use-todo'
 
-export default Vue.extend({})
+export default defineComponent({
+  setup() {
+    const { toDoItems, toDoName, addToDoItem, deleteToDoItem } = useTodo()
+
+    return {
+      toDoItems,
+      toDoName,
+      addToDoItem,
+      deleteToDoItem,
+    }
+  },
+})
 </script>
 
 <style>
-.container {
+.list-group {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.list-item {
+  margin: 5px;
+  text-indent: 0;
+}
+
+.to-do {
+  width: 800px;
   margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+.complete {
+  text-decoration: line-through;
+  color: #ddd;
 }
 </style>
