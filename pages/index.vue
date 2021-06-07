@@ -1,60 +1,41 @@
 <template>
   <div class="to-do">
-    <p>
-      NewTask:
-      <input v-model="toDoName" type="text" />
-      <button @click="addToDoItem">Add</button>
-    </p>
+    <new-to-do-field @addNewToDo="addToDoItem" />
     <hr />
-    <ul class="list-group">
-      <li v-for="toDoItem in toDoItems" :key="toDoItem.id" class="list-item">
-        <input v-model="toDoItem.complete" type="checkbox" />
-        <span :class="{ complete: toDoItem.complete }">{{
-          toDoItem.itemName
-        }}</span>
-        <button @click="deleteToDoItem(toDoItem)">Delete</button>
-      </li>
-    </ul>
+    <to-do-list
+      :to-do-items="toDoItems"
+      @deleteItem="deleteToDoItem"
+      @completeTodo="updateCompleteTodoItem"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@nuxtjs/composition-api'
 import { useTodo } from '~/composables/use-todo'
+import ToDoList from '~/components/ToDoList.vue'
+import NewToDoField from '~/components/NewToDoField.vue'
 
 export default defineComponent({
+  components: { NewToDoField, ToDoList },
   setup() {
-    const { toDoItems, toDoName, addToDoItem, deleteToDoItem } = useTodo()
+    const { toDoItems, addToDoItem, deleteToDoItem, updateCompleteTodoItem } =
+      useTodo()
 
     return {
       toDoItems,
-      toDoName,
       addToDoItem,
       deleteToDoItem,
+      updateCompleteTodoItem,
     }
   },
 })
 </script>
 
 <style>
-.list-group {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.list-item {
-  margin: 5px;
-  text-indent: 0;
-}
-
+/* scopedを書くとto-doが無効化される? */
 .to-do {
   width: 800px;
   margin: 0 auto;
-}
-
-.complete {
-  text-decoration: line-through;
-  color: #ddd;
 }
 </style>

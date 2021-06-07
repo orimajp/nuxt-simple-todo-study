@@ -1,9 +1,9 @@
-import { reactive, ref, toRefs } from '@nuxtjs/composition-api'
+import { reactive, toRefs } from '@nuxtjs/composition-api'
 
 /**
  * ToDo項目インタフェース
  */
-interface ToDoItem {
+export interface ToDoItem {
   id: number // v-forのkeyで使用する変更されないキー項目
   itemName: string
   complete: boolean
@@ -22,25 +22,21 @@ export const useTodo = () => {
     toDoItems: [],
   })
 
-  // ToDo名リアクティブ変数
-  const toDoName = ref('')
-
   // ID用カウンタ
   let index = 0
 
   /**
    * ToDo追加
    */
-  const addToDoItem = () => {
-    if (toDoName.value === '') {
+  const addToDoItem = (toDoName: string) => {
+    if (toDoName === '') {
       return
     }
     state.toDoItems.push({
       id: index++,
-      itemName: toDoName.value,
+      itemName: toDoName,
       complete: false,
     })
-    toDoName.value = ''
   }
 
   /**
@@ -52,10 +48,23 @@ export const useTodo = () => {
     state.toDoItems = state.toDoItems.filter((item) => item !== todoItem)
   }
 
+  /**
+   * 完了フラグ更新
+   *
+   * @param todoItem ToDo項目
+   */
+  const updateCompleteTodoItem = (todoItem: ToDoItem) => {
+    const toDoItem = state.toDoItems.filter((item) => item === todoItem)
+    if (!toDoItem.length) {
+      return
+    }
+    toDoItem[0].complete = !toDoItem[0].complete
+  }
+
   return {
     ...toRefs(state), // 分割代入対策
-    toDoName,
     addToDoItem,
     deleteToDoItem,
+    updateCompleteTodoItem,
   }
 }
